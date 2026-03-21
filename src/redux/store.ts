@@ -1,6 +1,4 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import bookReducer from "./features/bookSlice";
-import { BookingItem } from "../../interface";
 import {
   persistReducer,
   FLUSH,
@@ -13,19 +11,21 @@ import {
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import type { WebStorage } from "redux-persist/lib/types";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
+import { BookingItem } from "../../interface";
+import bookReducer from "./features/bookSlice";
 
 function createPersistStorage(): WebStorage {
   const isServer = typeof window === "undefined";
 
   if (isServer) {
     return {
-      getItem() {
+      getItem(_key: string) {
         return Promise.resolve(null);
       },
-      setItem(_key, value) {
-        return Promise.resolve(value);
+      setItem(_key: string, _value: string) {
+        return Promise.resolve();
       },
-      removeItem() {
+      removeItem(_key: string) {
         return Promise.resolve();
       },
     };
@@ -57,11 +57,12 @@ export const store = configureStore({
     }),
 });
 
-type RootState = {
+export type RootState = {
   bookSlice: {
     bookItems: BookingItem[];
   };
 };
+
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
