@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import bookReducer from "./features/bookSlice";
+import { BookingItem } from "../../interface";
 import {
   persistReducer,
   FLUSH,
@@ -56,7 +57,11 @@ export const store = configureStore({
     }),
 });
 
-export type RootState = ReturnType<typeof store.getState>;
+type RootState = {
+  bookSlice: {
+    bookItems: BookingItem[];
+  };
+};
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
