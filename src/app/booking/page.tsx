@@ -1,105 +1,120 @@
-"use client";
+'use client'
 
-import DateReserve from "@/components/DateReserve";
-import { addBooking } from "@/redux/features/bookSlice";
-import { useAppDispatch } from "@/redux/store";
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { getDentists } from '@/lib/dentists'
+import { createBooking } from '@/lib/bookings'
+import type { Dentist } from '@/interface'
+import { useAppSelector } from '@/redux/hooks'
 
 export default function BookingPage() {
-  const dispatch = useAppDispatch();
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { token, isLoggedIn } = useAppSelector((state) => state.auth)
 
-  const [nameLastname, setNameLastname] = useState("");
-  const [tel, setTel] = useState("");
-  const [venue, setVenue] = useState("");
-  const [bookDate, setBookDate] = useState<Dayjs | null>(dayjs());
+  const [dentists, setDentists] = useState<Dentist[]>([])
+  const [bookingDate, setBookingDate] = useState('')
+  const [dentist, setDentist] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleBooking = () => {
-    if (!nameLastname || !tel || !venue || !bookDate) return;
+  useEffect(() => {
+    if (!isLoggedIn || !token) {
+      router.push('/login')
+      return
+    }
 
-    dispatch(
-      addBooking({
-        nameLastname,
-        tel,
-        venue,
-        bookDate: bookDate.format("YYYY/MM/DD"),
-      })
-    );
-  };
+    const loadDentists = async () => {
+      try {
+        const res = await getDentists(token)
+        setDentists(res.data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load dentists')
+      }
+    }
+
+    loadDentists()
+  }, [isLoggedIn, token, router])
+
+  useEffect(() => {
+    const selectedDentist = searchParams.get('dentist')
+    if (selectedDentist) {
+      setDentist(selectedDentist)
+    }
+  }, [searchParams])
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!token) return
+
+    setError('')
+    setSuccess('')
+    setLoading(true)
+
+    try {
+      await createBooking({ bookingDate, dentist }, token)
+      setSuccess('Booking created successfully')
+      router.push('/booking/me')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Booking failed')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <main className="min-h-screen bg-[#f3f0ec]">
-      <div className="flex justify-center px-4 py-10">
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: 500,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            backgroundColor: "white",
-            padding: 4,
-            borderRadius: 3,
-            boxShadow: 3,
-          }}
-        >
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Venue Booking
-          </h1>
+    <main className="min-h-screen bg-slate-100 p-8">
+      <div className="mx-auto max-w-xl border border-slate-300 bg-white p-8 shadow-lg">
+        <h1 className="mb-6 text-2xl font-bold text-slate-900">
+          Create Booking
+        </h1>
 
-          <TextField
-            name="Name-Lastname"
-            label="Name-Lastname"
-            variant="standard"
-            fullWidth
-            value={nameLastname}
-            onChange={(e) => setNameLastname(e.target.value)}
-          />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-2 block font-medium text-slate-700">
+              Appointment Date and Time
+            </label>
+            <input
+              type="datetime-local"
+              className="w-full border border-slate-300 px-3 py-3 outline-none"
+              value={bookingDate}
+              onChange={(e) => setBookingDate(e.target.value)}
+              required
+            />
+          </div>
 
-          <TextField
-            name="Contact-Number"
-            label="Contact-Number"
-            variant="standard"
-            fullWidth
-            value={tel}
-            onChange={(e) => setTel(e.target.value)}
-          />
-
-          <FormControl fullWidth variant="standard">
-            <InputLabel id="venue-label">Venue</InputLabel>
-            <Select
-              labelId="venue-label"
-              id="venue"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-              label="Venue"
+          <div>
+            <label className="mb-2 block font-medium text-slate-700">
+              Select Dentist
+            </label>
+            <select
+              className="w-full border border-slate-300 px-3 py-3 outline-none"
+              value={dentist}
+              onChange={(e) => setDentist(e.target.value)}
+              required
             >
-              <MenuItem value="Bloom">The Bloom Pavilion</MenuItem>
-              <MenuItem value="Spark">Spark Space</MenuItem>
-              <MenuItem value="GrandTable">The Grand Table</MenuItem>
-            </Select>
-          </FormControl>
+              <option value="">Select dentist</option>
+              {dentists.map((d) => (
+                <option key={d._id} value={d._id}>
+                  {d.name} - {d.areaOfExpertise}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <DateReserve value={bookDate} onChange={setBookDate} />
+          {error && <p className="text-red-600">{error}</p>}
+          {success && <p className="text-green-600">{success}</p>}
 
-          <Button
-            name="Book Venue"
-            variant="contained"
-            onClick={handleBooking}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full border border-slate-300 bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
-            Book Venue
-          </Button>
-        </Box>
+            {loading ? 'Submitting...' : 'Book Now'}
+          </button>
+        </form>
       </div>
     </main>
-  );
+  )
 }

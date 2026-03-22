@@ -1,22 +1,22 @@
-import "./globals.css";
-import TopMenu from "@/components/TopMenu";
-import ReduxProvider from "@/redux/ReduxProvider";
+import type { Metadata } from 'next'
+import './globals.css'
+import ReduxProvider from '@/redux/provider'
+
+export const metadata: Metadata = {
+  title: 'Dentist Booking',
+  description: 'Dentist Booking System',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className="m-0">
-        <ReduxProvider>
-          <TopMenu />
-          <div className="pt-16">
-            {children}
-          </div>
-        </ReduxProvider>
+      <body className="bg-slate-100 text-slate-900">
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
-  );
+  )
 }
