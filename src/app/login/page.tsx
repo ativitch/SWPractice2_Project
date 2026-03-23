@@ -31,7 +31,12 @@ export default function LoginPage() {
         })
       )
 
+      if (meRes.data.role === 'admin') {
+      router.push('/admin/bookings')
+      } else {
       router.push('/dentists')
+      }
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {

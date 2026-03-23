@@ -17,10 +17,21 @@ export default function RegisterPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (telephone.length < 10) {
+      setError('Telephone number must be at least 10 digits')
+      return
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
     setLoading(true)
 
     try {
       await registerUser({ name, telephone, email, password })
+      alert("Registration Successful!")
       router.push('/login')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Register failed')
