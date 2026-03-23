@@ -1,19 +1,48 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useAppSelector } from '@/redux/hooks'
-import HomeBookingSummary from '@/components/HomeBookingSummary'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { logout } from '@/redux/features/authSlice'
+
+const platformSteps = [
+  {
+    number: '01',
+    title: 'Browse trusted dentists',
+    description:
+      'See dentists by expertise and experience before choosing the best match for your appointment.',
+  },
+  {
+    number: '02',
+    title: 'Book in a few clicks',
+    description:
+      'Create an appointment quickly with a clean booking flow and clear details before submission.',
+  },
+  {
+    number: '03',
+    title: 'Manage with confidence',
+    description:
+      'Users control their own bookings while admins can review and update every appointment in the system.',
+  },
+]
 
 export default function HomePage() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
-
+  const handleLogout = () => {
+  dispatch(logout())
+  router.push('/login')
+}
   const handleDentistRedirect = () => {
     if (!isLoggedIn || !user) {
       router.push('/login')
       return
     }
-    router.push(user.role === 'admin' ? '/admin/dentists' : '/dentists')
+    if (user.role === 'admin') {
+      router.push('/admin/dentists')
+    } else {
+      router.push('/dentists')
+    }
   }
 
   const handleBookingRedirect = () => {
@@ -21,19 +50,27 @@ export default function HomePage() {
       router.push('/login')
       return
     }
-    router.push(user.role === 'admin' ? '/admin/bookings' : '/booking/me')
+    if (user.role === 'admin') {
+      router.push('/admin/bookings')
+    } else {
+      router.push('/booking/me')
+    }
   }
 
   return (
-    <main className="min-h-[calc(100vh-110px)] bg-[linear-gradient(135deg,#f7fbff_0%,#edf4ff_32%,#f8fafc_100%)] px-3 py-3 sm:px-4 sm:py-4 lg:px-5">
-      <div className="space-y-4">
-        <section className="grid gap-3 xl:grid-cols-[1.42fr_1fr]">
-          <div className="overflow-hidden border border-slate-300 bg-[linear-gradient(135deg,#030817_0%,#0a1534_28%,#1e3f9f_66%,#ffffff_100%)] text-white shadow-xl">
-            <div className="flex min-h-[560px] flex-col justify-between p-5 sm:p-6 lg:p-8">
-              <div>
-                <span className="inline-block border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-100">
-                  Smart Dental Appointment Platform
-                </span>
+    <main className="min-h-[calc(100-screen-80px)] w-full bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200">
+      <section className="mx-auto max-w-[1600px] px-8 py-10 lg:px-12">
+        
+        {/* ลบส่วน <header> เดิมออกทั้งหมด เพราะเรามี TopMenu ใน layout.tsx แล้ว */}
+
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.35fr_0.9fr]">
+          
+          {/* ส่วน Banner หลัก */}
+          <div className="flex min-h-[600px] items-center justify-center border border-slate-800 bg-slate-950 px-12 py-14 text-white shadow-2xl">
+            <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-center">
+              <span className="mb-5 border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium uppercase tracking-[0.18em] text-slate-200">
+                Smart Dental Appointment Platform
+              </span>
 
                 <h1 className="mt-5 max-w-5xl text-5xl font-bold leading-[1.03] sm:text-6xl xl:text-7xl">
                   Beautiful dental booking,
@@ -74,51 +111,62 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex min-h-[560px] flex-col gap-4">
-            <div className="border border-slate-300 bg-white p-6 shadow-lg">
-              <p className="text-sm font-bold uppercase tracking-[0.25em] text-sky-600">
-                Platform Guide
+          {/* ส่วน User Guide ด้านข้าง */}
+          <div className="flex min-h-[600px] flex-col justify-between border border-slate-200 bg-white p-8 shadow-xl">
+            <div>
+              <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-500">
+                User Guide
               </p>
               <h2 className="mt-2 text-4xl font-bold leading-tight text-slate-900">
                 Everything your demo needs in one flow
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Show registration, authentication, dentist browsing, booking
-                creation, and role-based management in a polished journey that
-                looks consistent from start to finish.
-              </p>
-            </div>
 
-            {[
-              [
-                '01',
-                'Browse trusted dentists',
-                'See dentists by expertise and experience before choosing the best match for your appointment.',
-              ],
-              [
-                '02',
-                'Book in a few clicks',
-                'Create an appointment quickly with a clean booking flow and clear details before submission.',
-              ],
-              [
-                '03',
-                'Manage with confidence',
-                'Users control their own bookings while admins can review and update every appointment in the system.',
-              ],
-            ].map(([no, title, desc]) => (
-              <div
-                key={no}
-                className="grid grid-cols-[56px_1fr] gap-4 border border-slate-300 bg-white p-5 shadow"
-              >
-                <div className="flex h-14 w-14 items-center justify-center border border-slate-300 bg-slate-50 text-2xl font-bold text-sky-600">
-                  {no}
+              <div className="space-y-5 text-base leading-8 text-slate-700">
+                <div className="border-l-4 border-slate-900 pl-4">
+                  <p className="font-semibold text-slate-900">Browse dentists</p>
+                  <p className="text-sm">
+                    View the available dentists, check their area of expertise,
+                    and review experience before making a decision.
+                  </p>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-                  <p className="mt-2 text-lg leading-8 text-slate-600">{desc}</p>
+
+                <div className="border-l-4 border-slate-900 pl-4">
+                  <p className="font-semibold text-slate-900">Create a booking</p>
+                  <p className="text-sm">
+                    Select a date and choose your preferred dentist to make an
+                    appointment through the booking section.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-slate-900 pl-4">
+                  <p className="font-semibold text-slate-900">Manage your booking</p>
+                  <p className="text-sm">
+                    Users can view, update, or delete their own booking, while
+                    administrators can manage booking records across the system.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-slate-900 pl-4">
+                  <p className="font-semibold text-slate-900">Role-based access</p>
+                  <p className="text-sm">
+                    The Dentist and Booking buttons will take you to different
+                    pages depending on whether you are logged in as a user or an
+                    administrator.
+                  </p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="mt-8 border border-slate-200 bg-slate-50 p-6">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">
+                Quick Start
+              </p>
+              <ol className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
+                <li>1. Log in to access system features.</li>
+                <li>2. Open the Dentist page to review available dentists.</li>
+                <li>3. Open the Booking page to create or manage appointments.</li>
+              </ol>
+            </div>
           </div>
         </section>
 

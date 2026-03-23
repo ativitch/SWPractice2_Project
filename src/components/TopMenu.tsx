@@ -1,116 +1,105 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { logout } from '@/redux/features/authSlice'
 
 export default function TopMenu() {
+  const pathname = usePathname()
   const router = useRouter()
   const pathname = usePathname()
   const dispatch = useAppDispatch()
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
 
-  const handleDentistRedirect = () => {
-    if (!isLoggedIn || !user) {
-      router.push('/login')
-      return
-    }
+  const isAdmin = user?.role === 'admin'
 
-    router.push(user.role === 'admin' ? '/admin/dentists' : '/dentists')
-  }
-
-  const handleBookingRedirect = () => {
-    if (!isLoggedIn || !user) {
-      router.push('/login')
-      return
-    }
-
-    router.push(user.role === 'admin' ? '/admin/bookings' : '/booking/me')
-  }
+  const navItems = isAdmin
+    ? [
+        { label: 'Dentists', href: '/admin/dentists' },
+        { label: 'Bookings', href: '/admin/bookings' },
+      ]
+    : [
+        { label: 'Dentists', href: '/dentists' },
+        { label: 'Bookings', href: '/booking/me' },
+      ]
 
   const handleLogout = () => {
     dispatch(logout())
     router.push('/login')
   }
 
-  const isDentistActive =
-    pathname === '/dentists' || pathname.startsWith('/admin/dentists')
-
-  const isBookingActive =
-    pathname.startsWith('/booking') || pathname.startsWith('/admin/bookings')
-
   return (
-    <header className="w-full border-b border-slate-800/40 bg-[linear-gradient(90deg,#0b1220_0%,#17203a_55%,#1c2546_100%)] text-white shadow-md">
-      <div className="w-full px-4 py-4 sm:px-6 lg:px-10">
-        <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center border border-sky-500/40 bg-sky-500/10 text-2xl font-bold text-sky-200 shadow-inner">
-              DB
-            </div>
-
-            <div>
-              <button
-                onClick={() => router.push('/')}
-                className="text-left text-3xl font-bold tracking-tight text-white transition hover:text-sky-200"
-              >
-                Dentist Booking
-              </button>
-              <p className="text-sm text-slate-300">
-                Role based booking management
-              </p>
-            </div>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-400/40 bg-slate-900 text-lg font-bold text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)]">
+            DB
           </div>
 
-          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-2 border border-white/10 bg-white/5 p-1">
-              <button
-                onClick={handleDentistRedirect}
-                className={`px-5 py-2 text-sm font-semibold transition ${
-                  isDentistActive
-                    ? 'bg-white text-slate-900'
-                    : 'bg-transparent text-slate-200 hover:bg-white/10'
+          <div>
+            <p className="text-2xl font-semibold tracking-tight text-white">
+              Dentist Booking
+            </p>
+            <p className="text-sm text-slate-400">
+              Role based booking management
+            </p>
+          </div>
+        </Link>
+
+        <nav className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1.5 md:flex">
+          {navItems.map((item) => {
+            const active = pathname === item.href
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                  active
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-200 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                Dentists
-              </button>
+                {item.label}
+              </Link>
+            )
+          })}
+        </nav>
 
+        <div className="flex items-center gap-3">
+          {!isLoggedIn ? (
+            <>
               <button
-                onClick={handleBookingRedirect}
-                className={`px-5 py-2 text-sm font-semibold transition ${
-                  isBookingActive
-                    ? 'bg-white text-slate-900'
-                    : 'bg-transparent text-slate-200 hover:bg-white/10'
-                }`}
+                onClick={() => router.push('/register')}
+                className="rounded-2xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
               >
-                Bookings
+                Register
               </button>
-            </div>
+              <button
+                onClick={() => router.push('/login')}
+                className="rounded-2xl border border-white/15 bg-sky-900/40 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-800/60"
+              >
+                Sign In
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="hidden text-right sm:block">
+                <p className="text-sm font-medium text-white">{user?.name}</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-sky-300">
+                  {user?.role}
+                </p>
+              </div>
 
-            {isLoggedIn ? (
               <button
                 onClick={handleLogout}
-                className="border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                LOGOUT
+                Logout
               </button>
-            ) : (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => router.push('/register')}
-                  className="border border-white/20 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
-                >
-                  Register
-                </button>
-
-                <button
-                  onClick={() => router.push('/login')}
-                  className="border border-sky-400 bg-sky-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-400"
-                >
-                  Sign In
-                </button>
-              </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </header>
