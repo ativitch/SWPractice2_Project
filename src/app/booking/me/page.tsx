@@ -64,10 +64,10 @@ export default function MyBookingPage() {
             </button>
 
             <button
-              onClick={() => router.push('/booking')}
-              className="w-full border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 transition hover:bg-slate-100"
+                onClick={() => router.push('/booking/edit')}
+                className="w-full border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 transition hover:bg-slate-100"
             >
-              Update booking
+                Update booking
             </button>
 
             <button

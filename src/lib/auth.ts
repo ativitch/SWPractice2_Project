@@ -20,3 +20,6 @@ export async function loginUser(body: {
 export async function getMe(token: string) {
   return apiGet<MeResponse>('/auth/me', token)
 }
+export async function logoutUser() {
+  return apiGet<{ success: boolean }>('/auth/logout')
+}

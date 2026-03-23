@@ -1,12 +1,17 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { logout } from '@/redux/features/authSlice'
 
 export default function HomePage() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
-
+  const handleLogout = () => {
+  dispatch(logout())
+  router.push('/login')
+}
   const handleDentistRedirect = () => {
     if (!isLoggedIn || !user) {
       router.push('/login')
@@ -48,10 +53,10 @@ export default function HomePage() {
             </button>
 
             <button
-              onClick={() => router.push(isLoggedIn ? '/' : '/login')}
+              onClick={isLoggedIn ? handleLogout : () => router.push('/login')}
               className="border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-            >
-              {isLoggedIn ? 'ACCOUNT' : 'LOGIN'}
+              >
+                {isLoggedIn ? 'LOGOUT' : 'LOGIN'}
             </button>
           </div>
 
