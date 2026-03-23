@@ -55,134 +55,137 @@ export default function AdminDentistsPage() {
   }, [dentists, search])
 
   const totalDentists = dentists.length
-  const totalExperience = dentists.reduce(
-    (sum, dentist) => sum + dentist.yearsOfExperience,
-    0
-  )
   const averageExperience =
-    totalDentists > 0 ? (totalExperience / totalDentists).toFixed(1) : '0.0'
+    totalDentists > 0
+      ? (
+          dentists.reduce((sum, dentist) => sum + dentist.yearsOfExperience, 0) /
+          totalDentists
+        ).toFixed(1)
+      : '0.0'
+  const expertiseCount = new Set(dentists.map((dentist) => dentist.areaOfExpertise)).size
 
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
-      <div className="mx-auto max-w-7xl border border-slate-300 bg-white p-8 shadow-lg">
-        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
-              Admin Panel
-            </p>
-            <h1 className="text-3xl font-bold text-slate-900">
-              Dentist Directory
-            </h1>
-            <p className="mt-2 text-slate-600">
-              View all dentists in the system and navigate to booking
-              management.
-            </p>
+    <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <section className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 sm:p-10">
+          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+            <div className="max-w-2xl">
+              <span className="rounded-full bg-cyan-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">
+                Admin dentist directory
+              </span>
+              <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                Review dentist profiles in a clearer management view.
+              </h1>
+              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                Search dentists, review specialties, and jump to the admin booking dashboard when you need to manage appointments.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => router.push('/admin/bookings')}
+                className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-slate-800"
+              >
+                Go to admin bookings
+              </button>
+              <button
+                onClick={() => router.push('/booking')}
+                className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Go to booking form
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50">
+            <p className="text-sm text-slate-500">Total dentists</p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{totalDentists}</p>
+          </div>
+          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50">
+            <p className="text-sm text-slate-500">Specialties</p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{expertiseCount}</p>
+          </div>
+          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50">
+            <p className="text-sm text-slate-500">Average experience</p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{averageExperience} yrs</p>
+          </div>
+        </section>
+
+        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
+          <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">All dentists</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Search by dentist name or expertise.
+              </p>
+            </div>
+            <input
+              type="text"
+              placeholder="Search by name or expertise"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full max-w-md rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-cyan-300 focus:bg-white"
+            />
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={() => router.push('/admin/bookings')}
-              className="border border-slate-300 bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
-            >
-              Go to Admin Bookings
-            </button>
-
-            <button
-              onClick={() => router.push('/booking')}
-              className="border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 transition hover:bg-slate-100"
-            >
-              Go to Booking Form
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="border border-slate-300 bg-slate-50 p-5">
-            <p className="text-sm text-slate-500">Total Dentists</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {totalDentists}
-            </p>
-          </div>
-
-          <div className="border border-slate-300 bg-slate-50 p-5">
-            <p className="text-sm text-slate-500">Total Experience</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {totalExperience} yrs
-            </p>
-          </div>
-
-          <div className="border border-slate-300 bg-slate-50 p-5">
-            <p className="text-sm text-slate-500">Average Experience</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {averageExperience} yrs
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-6 flex items-center gap-4">
-          <div className="h-5 w-5 border border-slate-500" />
-          <input
-            type="text"
-            placeholder="Search by name or expertise"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-xl border border-slate-500 px-4 py-2 outline-none"
-          />
-        </div>
-
-        {error && (
-          <div className="mb-4 border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-            {error}
-          </div>
-        )}
-
-        <div className="border border-slate-300 bg-slate-50 p-8">
-          <h2 className="mb-6 text-2xl font-bold text-slate-900">
-            All Dentists
-          </h2>
+          {error && (
+            <div className="mb-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           {loading ? (
-            <p className="text-slate-600">Loading dentists...</p>
+            <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center text-slate-600">
+              Loading dentists...
+            </div>
           ) : filteredDentists.length === 0 ? (
-            <p className="text-slate-600">No dentist found.</p>
+            <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center text-slate-600">
+              No dentist found.
+            </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredDentists.map((dentist) => (
                 <div
                   key={dentist._id}
-                  className="border border-slate-300 bg-white p-5 shadow-sm"
+                  className="rounded-[28px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-lg shadow-slate-200/50"
                 >
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {dentist.name}
-                  </h3>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
+                        {dentist.areaOfExpertise}
+                      </p>
+                      <h3 className="mt-3 text-xl font-bold text-slate-900">
+                        {dentist.name}
+                      </h3>
+                    </div>
+                    <div className="rounded-2xl bg-cyan-50 px-3 py-2 text-right">
+                      <p className="text-xs text-cyan-700">Experience</p>
+                      <p className="text-sm font-bold text-cyan-900">
+                        {dentist.yearsOfExperience} yrs
+                      </p>
+                    </div>
+                  </div>
 
-                  <p className="mt-2 text-slate-700">
-                    <span className="font-medium">Expertise:</span>{' '}
-                    {dentist.areaOfExpertise}
+                  <p className="mt-5 text-sm leading-7 text-slate-600">
+                    Review this profile or jump directly into booking management for appointment changes.
                   </p>
 
-                  <p className="text-slate-700">
-                    <span className="font-medium">Experience:</span>{' '}
-                    {dentist.yearsOfExperience} years
-                  </p>
-
-                  <p className="mt-3 break-all text-xs text-slate-500">
+                  <p className="mt-4 break-all text-xs text-slate-400">
                     ID: {dentist._id}
                   </p>
 
-                  <div className="mt-5 flex gap-3">
+                  <div className="mt-6 flex gap-3">
                     <button
-                      onClick={() =>
-                        router.push(`/booking?dentist=${dentist._id}`)
-                      }
-                      className="flex-1 border border-slate-300 bg-slate-900 px-4 py-2 font-semibold text-white transition hover:bg-slate-800"
+                      onClick={() => router.push(`/booking?dentist=${dentist._id}`)}
+                      className="flex-1 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-slate-800"
                     >
                       Book
                     </button>
-
                     <button
                       onClick={() => router.push('/admin/bookings')}
-                      className="flex-1 border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-800 transition hover:bg-slate-100"
+                      className="flex-1 rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                     >
                       Manage
                     </button>
@@ -191,7 +194,7 @@ export default function AdminDentistsPage() {
               ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </main>
   )

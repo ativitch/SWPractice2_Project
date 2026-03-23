@@ -4,6 +4,27 @@ import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { logout } from '@/redux/features/authSlice'
 
+const platformSteps = [
+  {
+    number: '01',
+    title: 'Browse trusted dentists',
+    description:
+      'See dentists by expertise and experience before choosing the best match for your appointment.',
+  },
+  {
+    number: '02',
+    title: 'Book in a few clicks',
+    description:
+      'Create an appointment quickly with a clean booking flow and clear details before submission.',
+  },
+  {
+    number: '03',
+    title: 'Manage with confidence',
+    description:
+      'Users control their own bookings while admins can review and update every appointment in the system.',
+  },
+]
+
 export default function HomePage() {
   const router = useRouter()
   const dispatch = useAppDispatch()
