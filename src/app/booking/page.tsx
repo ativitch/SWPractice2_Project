@@ -64,8 +64,8 @@ export default function BookingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 p-8">
-      <div className="mx-auto max-w-xl border border-slate-300 bg-white p-8 shadow-lg">
+    <main className="min-h-[calc(100vh-110px)] bg-[linear-gradient(135deg,#eef2ff_0%,#e2e8f0_35%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-10">
+  <section className="mx-auto w-full max-w-[1600px] border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
         <h1 className="mb-6 text-2xl font-bold text-slate-900">
           Create Booking
         </h1>
@@ -114,7 +114,7 @@ export default function BookingPage() {
             {loading ? 'Submitting...' : 'Book Now'}
           </button>
         </form>
-      </div>
+      </section>
     </main>
   )
 }

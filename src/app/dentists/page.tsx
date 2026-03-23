@@ -40,8 +40,8 @@ export default function DentistsPage() {
   )
 
   return (
-    <main className="min-h-screen bg-[#efefef] px-6 py-10">
-      <div className="mx-auto max-w-7xl border border-slate-300 bg-white p-8 shadow-lg">
+    <main className="min-h-[calc(100vh-110px)] bg-[linear-gradient(135deg,#eef2ff_0%,#e2e8f0_35%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-10">
+  <section className="mx-auto w-full max-w-[1600px] border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
         <div className="mb-6 flex items-center gap-4">
           <div className="h-5 w-5 border border-slate-500" />
           <input
@@ -97,7 +97,7 @@ export default function DentistsPage() {
             )}
           </div>
         </div>
-      </div>
+      </section>
     </main>
   )
 }

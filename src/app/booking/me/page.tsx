@@ -52,8 +52,8 @@ export default function MyBookingPage() {
       : null
 
   return (
-    <main className="min-h-screen bg-slate-100 p-8">
-      <div className="mx-auto max-w-5xl border border-slate-300 bg-white p-8 shadow">
+    <main className="min-h-[calc(100vh-110px)] bg-[linear-gradient(135deg,#eef2ff_0%,#e2e8f0_35%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-10">
+  <section className="mx-auto w-full max-w-[1600px] border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
           <div className="space-y-4">
             <button
@@ -115,7 +115,7 @@ export default function MyBookingPage() {
             )}
           </div>
         </div>
-      </div>
+      </section>
     </main>
   )
 }

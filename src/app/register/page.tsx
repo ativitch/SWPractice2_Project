@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerUser } from '@/lib/auth'
+import AuthSplitLayout from '@/components/AuthSplitLayout'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -30,53 +31,78 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 p-8">
-      <div className="mx-auto max-w-md rounded-xl bg-white p-8 shadow">
-        <h1 className="mb-6 text-2xl font-bold">Register</h1>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthSplitLayout
+      title="Create account"
+      subtitle="Register a new account to browse dentists and manage appointments."
+      footerText="Already have an account?"
+      footerLinkText="Sign in here"
+      footerHref="/login"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
+            Full Name
+          </label>
           <input
-            className="w-full rounded border p-3"
-            placeholder="Name"
+            className="w-full border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white"
+            placeholder="Enter your full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
+            Telephone Number
+          </label>
           <input
-            className="w-full rounded border p-3"
-            placeholder="Telephone"
+            className="w-full border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white"
+            placeholder="Enter your telephone number"
             value={telephone}
             onChange={(e) => setTelephone(e.target.value)}
             required
           />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
+            Email
+          </label>
           <input
-            className="w-full rounded border p-3"
+            className="w-full border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white"
             type="email"
-            placeholder="Email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
+            Password
+          </label>
           <input
-            className="w-full rounded border p-3"
+            className="w-full border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white"
             type="password"
-            placeholder="Password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+        </div>
 
-          {error && <p className="text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded bg-slate-900 p-3 text-white hover:bg-slate-800"
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-      </div>
-    </main>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full border border-sky-500 bg-sky-500 px-4 py-3 font-semibold text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? 'Creating account...' : 'Create Account'}
+        </button>
+      </form>
+    </AuthSplitLayout>
   )
 }

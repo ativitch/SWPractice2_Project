@@ -63,8 +63,8 @@ export default function AdminDentistsPage() {
     totalDentists > 0 ? (totalExperience / totalDentists).toFixed(1) : '0.0'
 
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
-      <div className="mx-auto max-w-7xl border border-slate-300 bg-white p-8 shadow-lg">
+   <main className="min-h-[calc(100vh-110px)] bg-[linear-gradient(135deg,#eef2ff_0%,#e2e8f0_35%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-10">
+  <section className="mx-auto w-full max-w-[1600px] border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -192,7 +192,7 @@ export default function AdminDentistsPage() {
             </div>
           )}
         </div>
-      </div>
+      </section>
     </main>
   )
 }
