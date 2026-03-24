@@ -1,5 +1,8 @@
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5003/api/v1'
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+
+if (!BASE_URL) {
+  throw new Error('NEXT_PUBLIC_BACKEND_URL is not set')
+}
 
 function buildHeaders(token?: string, isJson: boolean = true): HeadersInit {
   const headers: HeadersInit = {}
