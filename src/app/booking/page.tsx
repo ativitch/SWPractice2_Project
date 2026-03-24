@@ -8,6 +8,27 @@ import type { Dentist } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
 import PageShell from '@/components/PageShell'
 
+const inputStyle = {
+  width: '100%', padding: '13px 16px',
+  borderRadius: 12, fontSize: 15,
+  border: '1.5px solid #e4e1db',
+  background: '#f9f8f6', color: '#18160f',
+  outline: 'none',
+}
+
+const focusHandlers = {
+  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.target.style.borderColor = '#c8a96e'
+    e.target.style.boxShadow = '0 0 0 3px rgba(200,169,110,0.12)'
+    e.target.style.background = '#fff'
+  },
+  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.target.style.borderColor = '#e4e1db'
+    e.target.style.boxShadow = 'none'
+    e.target.style.background = '#f9f8f6'
+  },
+}
+
 export default function BookingPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -21,12 +42,8 @@ export default function BookingPage() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!isLoggedIn || !token) {
-      router.push('/login')
-      return
-    }
-
-    const loadDentists = async () => {
+    if (!isLoggedIn || !token) { router.push('/login'); return }
+    const load = async () => {
       try {
         const res = await getDentists(token)
         setDentists(res.data)
@@ -34,15 +51,12 @@ export default function BookingPage() {
         setError(err instanceof Error ? err.message : 'Failed to load dentists')
       }
     }
-
-    void loadDentists()
+    void load()
   }, [isLoggedIn, token, router])
 
   useEffect(() => {
-    const selectedDentist = searchParams.get('dentist')
-    if (selectedDentist) {
-      setDentist(selectedDentist)
-    }
+    const d = searchParams.get('dentist')
+    if (d) setDentist(d)
   }, [searchParams])
 
   const selectedDentist = useMemo(
@@ -53,11 +67,7 @@ export default function BookingPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!token) return
-
-    setError('')
-    setSuccess('')
-    setLoading(true)
-
+    setError(''); setSuccess(''); setLoading(true)
     try {
       await createBooking({ bookingDate, dentist }, token)
       setSuccess('Booking created successfully')
@@ -71,124 +81,182 @@ export default function BookingPage() {
 
   return (
     <PageShell>
-      <div className="grid w-full gap-8 lg:grid-cols-[0.92fr_1.08fr]">
-        <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(145deg,#0f172a_0%,#1e293b_60%,#164e63_120%)] p-8 text-white shadow-2xl shadow-slate-900/15 sm:p-10">
-          <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-sky-100">
-            Booking center
+      <div style={{ display: 'grid', gap: 20, gridTemplateColumns: '1fr 1fr' }}>
+        {/* Left — info panel */}
+        <section style={{
+          borderRadius: 24,
+          background: 'linear-gradient(150deg, #0d1a36 0%, #1a2744 50%, #243560 100%)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          padding: '48px 48px',
+          boxShadow: '0 20px 60px rgba(13,26,54,0.35)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* Top accent */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+            background: 'linear-gradient(90deg, transparent, #c8a96e 30%, #a8893e 70%, transparent)',
+          }} />
+
+          <span style={{
+            display: 'inline-block',
+            background: 'rgba(200,169,110,0.14)', border: '1px solid rgba(200,169,110,0.28)',
+            borderRadius: 6, padding: '4px 12px',
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+            textTransform: 'uppercase', color: '#c8a96e',
+          }}>
+            Booking Center
           </span>
-          <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
+
+          <h1 style={{
+            fontFamily: "'Instrument Serif', Georgia, serif",
+            fontSize: 'clamp(32px, 3vw, 44px)', fontWeight: 400,
+            color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.15,
+            marginTop: 20, maxWidth: 380,
+          }}>
             Schedule your appointment with confidence.
           </h1>
-          <p className="mt-5 text-sm leading-8 text-slate-200 sm:text-base">
-            Choose a dentist, pick a date and time, and submit your booking in a cleaner, more polished flow.
+
+          <p style={{ marginTop: 16, fontSize: 15, lineHeight: 1.75, color: 'rgba(255,255,255,0.55)', maxWidth: 360 }}>
+            Choose a dentist, pick a date, and submit your booking in a clean, polished flow.
           </p>
 
-          <div className="mt-8 rounded-[28px] border border-white/10 bg-white/8 p-6 backdrop-blur-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-100">
-              Selected dentist
+          {/* Selected dentist preview */}
+          <div style={{
+            marginTop: 36,
+            borderRadius: 18,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            padding: '24px 28px',
+            backdropFilter: 'blur(12px)',
+          }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#c8a96e' }}>
+              Selected Dentist
             </p>
             {selectedDentist ? (
-              <div className="mt-4 space-y-3">
-                <h2 className="text-2xl font-bold text-white">{selectedDentist.name}</h2>
-                <p className="text-sm text-slate-200">
-                  Expertise: <span className="font-semibold text-white">{selectedDentist.areaOfExpertise}</span>
-                </p>
-                <p className="text-sm text-slate-200">
-                  Experience: <span className="font-semibold text-white">{selectedDentist.yearsOfExperience} years</span>
-                </p>
+              <div style={{ marginTop: 16 }}>
+                <h2 style={{ fontSize: 22, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>
+                  {selectedDentist.name}
+                </h2>
+                <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)' }}>
+                    Expertise: <span style={{ color: '#fff', fontWeight: 600 }}>{selectedDentist.areaOfExpertise}</span>
+                  </p>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)' }}>
+                    Experience: <span style={{ color: '#fff', fontWeight: 600 }}>{selectedDentist.yearsOfExperience} years</span>
+                  </p>
+                </div>
               </div>
             ) : (
-              <p className="mt-4 text-sm leading-7 text-slate-200">
-                Select a dentist from the form to preview the appointment details here.
+              <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.7, color: 'rgba(255,255,255,0.45)' }}>
+                Select a dentist from the form to preview details here.
               </p>
             )}
           </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <p className="text-sm font-semibold text-white">Step 1</p>
-              <p className="mt-2 text-sm leading-7 text-slate-200">
-                Choose your preferred appointment date and time.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <p className="text-sm font-semibold text-white">Step 2</p>
-              <p className="mt-2 text-sm leading-7 text-slate-200">
-                Select a dentist and confirm your booking.
-              </p>
-            </div>
+          {/* Steps */}
+          <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {[['Step 1', 'Choose your preferred appointment date and time.'], ['Step 2', 'Select a dentist and confirm your booking.']].map(([s, d]) => (
+              <div key={s} style={{
+                borderRadius: 14, background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                padding: '16px 18px',
+              }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#c8a96e', letterSpacing: '0.04em' }}>{s}</p>
+                <p style={{ marginTop: 8, fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.50)' }}>{d}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 sm:p-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Appointment form
+        {/* Right — form */}
+        <section style={{
+          borderRadius: 24, background: '#fff',
+          border: '1.5px solid #e4e1db',
+          padding: '48px 48px',
+          boxShadow: '0 4px 24px rgba(24,22,15,0.07)',
+        }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#a8893e' }}>
+            Appointment Form
           </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+          <h2 style={{
+            fontFamily: "'Instrument Serif', Georgia, serif",
+            fontSize: 34, fontWeight: 400, color: '#18160f',
+            letterSpacing: '-0.02em', marginTop: 10,
+          }}>
             Create Booking
           </h2>
-          <p className="mt-3 text-sm leading-7 text-slate-600">
-            Fill in the information below to create your appointment.
+          <p style={{ marginTop: 10, fontSize: 15, lineHeight: 1.65, color: '#5c5850' }}>
+            Fill in the details below to schedule your appointment.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <form onSubmit={handleSubmit} style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Appointment Date and Time
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#5c5850', marginBottom: 8 }}>
+                Appointment Date & Time
               </label>
               <input
                 type="datetime-local"
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
+                style={inputStyle}
                 value={bookingDate}
                 onChange={(e) => setBookingDate(e.target.value)}
+                {...focusHandlers}
                 required
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#5c5850', marginBottom: 8 }}>
                 Select Dentist
               </label>
               <select
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
+                style={{ ...inputStyle, appearance: 'none' }}
                 value={dentist}
                 onChange={(e) => setDentist(e.target.value)}
+                {...focusHandlers}
                 required
               >
-                <option value="">Select dentist</option>
+                <option value="">Choose a dentist</option>
                 {dentists.map((d) => (
-                  <option key={d._id} value={d._id}>
-                    {d.name} - {d.areaOfExpertise}
-                  </option>
+                  <option key={d._id} value={d._id}>{d.name} — {d.areaOfExpertise}</option>
                 ))}
               </select>
             </div>
 
             {error && (
-              <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div style={{ padding: '11px 14px', borderRadius: 10, background: '#fee2e2', border: '1px solid #fecaca', fontSize: 13, color: '#dc2626' }}>
                 {error}
               </div>
             )}
             {success && (
-              <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              <div style={{ padding: '11px 14px', borderRadius: 10, background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: 13, color: '#16a34a' }}>
                 {success}
               </div>
             )}
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  flex: 1, padding: '14px', borderRadius: 12, fontSize: 15, fontWeight: 600,
+                  background: loading ? 'rgba(200,169,110,0.5)' : 'linear-gradient(135deg, #c8a96e, #a8893e)',
+                  border: 'none', color: '#fff', cursor: loading ? 'not-allowed' : 'pointer',
+                  boxShadow: loading ? 'none' : '0 4px 20px rgba(200,169,110,0.35)',
+                  letterSpacing: '-0.01em',
+                }}
               >
                 {loading ? 'Submitting...' : 'Book Now'}
               </button>
               <button
                 type="button"
                 onClick={() => router.push('/booking/me')}
-                className="rounded-2xl border border-slate-200 px-5 py-3.5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                style={{
+                  padding: '14px 20px', borderRadius: 12, fontSize: 14, fontWeight: 500,
+                  border: '1.5px solid #e4e1db', background: '#f9f8f6',
+                  color: '#5c5850', cursor: 'pointer',
+                }}
               >
-                View my booking
+                My Bookings
               </button>
             </div>
           </form>

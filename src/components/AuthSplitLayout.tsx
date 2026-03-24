@@ -21,73 +21,153 @@ export default function AuthSplitLayout({
   children,
 }: AuthSplitLayoutProps) {
   return (
-    <main className="min-h-screen bg-[linear-gradient(135deg,#f8fbff_0%,#eef4ff_45%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex w-full justify-center">
-        <section className="grid min-h-[calc(100vh-48px)] w-full max-w-[1440px] overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-2xl lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="relative min-h-[320px] lg:min-h-full">
-            <Image
-              src="/img/login.jpg"
-              alt="Authentication visual"
-              fill
-              priority
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(2,6,23,0.45)_0%,rgba(15,23,42,0.2)_45%,rgba(255,255,255,0.02)_100%)]" />
+    <main style={{ minHeight: '100vh', background: '#0f1624', display: 'flex', alignItems: 'stretch' }}>
+      {/* Left — full-bleed image panel */}
+      <div style={{ flex: '1.15', position: 'relative', display: 'none' }} className="lg:block" >
+        <Image
+          src="/img/login.jpg"
+          alt="Dental clinic"
+          fill
+          priority
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
+        />
+        {/* Gradient overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(160deg, rgba(10,16,40,0.62) 0%, rgba(15,22,36,0.30) 50%, rgba(10,16,40,0.70) 100%)',
+        }} />
 
-            <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/20 bg-white/10 px-5 py-4 backdrop-blur-sm">
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-white">
-                Dentist Booking
-              </div>
-
-              <div className="hidden gap-6 text-sm font-medium text-white/90 md:flex">
-                <span>Browse Dentists</span>
-                <span>Book Appointment</span>
-                <span>Manage Booking</span>
-              </div>
+        {/* Top bar */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          padding: '28px 36px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 10,
+              background: 'linear-gradient(135deg, #c8a96e, #a8893e)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 13, fontWeight: 700, color: '#fff',
+            }}>
+              DB
             </div>
+            <span style={{ fontSize: 15, fontWeight: 600, color: '#fff', letterSpacing: '-0.02em' }}>
+              Dentist Booking
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 24 }}>
+            {['Dentists', 'Appointments', 'Dashboard'].map((item) => (
+              <span key={item} style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', fontWeight: 500 }}>
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
 
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <div className="max-w-xl rounded-xl border border-white/15 bg-slate-950/35 p-6 text-white backdrop-blur-md">
-                <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-200">
-                  Smart Dental Appointment Platform
-                </p>
-                <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">
-                  Clean access to your dental booking workflow.
-                </h2>
-                <p className="mt-4 text-sm leading-7 text-slate-200 sm:text-base">
-                  Browse dentists, manage appointments, and access booking tools
-                  through a professional role-based system.
-                </p>
-              </div>
+        {/* Bottom card */}
+        <div style={{ position: 'absolute', bottom: 40, left: 36, right: 36 }}>
+          <div style={{
+            borderRadius: 20,
+            background: 'rgba(10,16,40,0.55)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            padding: '28px 32px',
+          }}>
+            <div style={{
+              display: 'inline-block', marginBottom: 14,
+              background: 'rgba(200,169,110,0.18)',
+              border: '1px solid rgba(200,169,110,0.30)',
+              borderRadius: 6, padding: '4px 12px',
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+              textTransform: 'uppercase', color: '#c8a96e',
+            }}>
+              Smart Dental Platform
             </div>
+            <h2 style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 30, fontWeight: 400, color: '#fff',
+              lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0,
+            }}>
+              Your complete dental<br />appointment workflow.
+            </h2>
+            <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.7, color: 'rgba(255,255,255,0.58)' }}>
+              Browse specialists, manage schedules, and keep track of every appointment through a professional role-based system.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right — form panel */}
+      <div style={{
+        width: '100%', flex: '0 0 auto',
+        maxWidth: 520,
+        background: '#f9f8f6',
+        display: 'flex', alignItems: 'center',
+        padding: '48px 56px',
+        position: 'relative',
+      }}>
+        {/* Subtle top accent line */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 3,
+          background: 'linear-gradient(90deg, #c8a96e, #a8893e)',
+        }} />
+
+        <div style={{ width: '100%' }}>
+          {/* Mobile logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }} className="lg:hidden">
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: 'linear-gradient(135deg, #c8a96e, #a8893e)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 12, fontWeight: 700, color: '#fff',
+            }}>DB</div>
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#18160f', letterSpacing: '-0.02em' }}>
+              Dentist Booking
+            </span>
           </div>
 
-          <div className="flex items-center bg-slate-50 px-5 py-8 sm:px-8 lg:px-10">
-            <div className="mx-auto w-full max-w-md">
-              <div className="mb-8">
-                <p className="text-sm font-bold uppercase tracking-[0.22em] text-sky-600">
-                  Authentication
-                </p>
-                <h1 className="mt-2 text-4xl font-bold text-slate-900">{title}</h1>
-                <p className="mt-3 text-base leading-7 text-slate-600">{subtitle}</p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg sm:p-7">
-                {children}
-              </div>
-
-              <p className="mt-6 text-sm leading-6 text-slate-600">
-                {footerText}{' '}
-                <Link
-                  href={footerHref}
-                  className="font-semibold text-sky-600 transition hover:text-sky-500"
-                >
-                  {footerLinkText}
-                </Link>
-              </p>
-            </div>
+          {/* Header */}
+          <div style={{ marginBottom: 36 }}>
+            <p style={{
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+              textTransform: 'uppercase', color: '#c8a96e', marginBottom: 10,
+            }}>
+              Authentication
+            </p>
+            <h1 style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 38, fontWeight: 400, color: '#18160f',
+              letterSpacing: '-0.02em', lineHeight: 1.15, margin: 0,
+            }}>
+              {title}
+            </h1>
+            <p style={{ marginTop: 10, fontSize: 15, lineHeight: 1.65, color: '#5c5850' }}>
+              {subtitle}
+            </p>
           </div>
-        </section>
+
+          {/* Form card */}
+          <div style={{
+            background: '#fff',
+            borderRadius: 20,
+            border: '1.5px solid #e4e1db',
+            padding: '32px',
+            boxShadow: '0 4px 24px rgba(24,22,15,0.07)',
+          }}>
+            {children}
+          </div>
+
+          {/* Footer */}
+          <p style={{ marginTop: 24, fontSize: 14, color: '#8c8880', textAlign: 'center' }}>
+            {footerText}{' '}
+            <Link href={footerHref} style={{
+              color: '#c8a96e', fontWeight: 600, textDecoration: 'none',
+            }}>
+              {footerLinkText}
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   )

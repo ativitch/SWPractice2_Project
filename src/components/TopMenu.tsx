@@ -11,9 +11,7 @@ export default function TopMenu() {
   const dispatch = useAppDispatch()
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
 
-  if (pathname === '/login' || pathname === '/register') {
-    return null
-  }
+  if (pathname === '/login' || pathname === '/register') return null
 
   const isAdmin = user?.role === 'admin'
 
@@ -24,7 +22,7 @@ export default function TopMenu() {
       ]
     : [
         { label: 'Dentists', href: '/dentists' },
-        { label: 'Bookings', href: '/booking/me' },
+        { label: 'My Bookings', href: '/booking/me' },
       ]
 
   const handleLogout = () => {
@@ -33,75 +31,136 @@ export default function TopMenu() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
-      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
-          <Link href="/" className="flex min-w-0 items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-sky-400/40 bg-slate-900 text-lg font-bold text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)]">
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(26,39,68,0.97)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        boxShadow: '0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.25)',
+      }}
+    >
+      <div style={{ maxWidth: 1440, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 16, height: 72 }}>
+          
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none' }}>
+            <div style={{
+              width: 42, height: 42, borderRadius: 12,
+              background: 'linear-gradient(135deg, #c8a96e 0%, #a8893e 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 15, fontWeight: 700, color: '#fff',
+              letterSpacing: '-0.02em',
+              boxShadow: '0 4px 16px rgba(200,169,110,0.35)',
+            }}>
               DB
             </div>
-
-            <div className="min-w-0">
-              <p className="truncate text-2xl font-semibold tracking-tight text-white">
+            <div>
+              <p style={{ fontSize: 17, fontWeight: 600, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
                 Dentist Booking
               </p>
-              <p className="truncate text-sm text-slate-400">
-                Role based booking management
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                Appointment Platform
               </p>
             </div>
           </Link>
 
-          <div className="hidden justify-center md:flex">
-            <nav className="flex items-center gap-3">
-              {navItems.map((item) => {
-                const active = pathname === item.href
+          {/* Nav */}
+          <nav style={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
+            {navItems.map((item) => {
+              const active = pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    padding: '8px 20px',
+                    borderRadius: 10,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    letterSpacing: '-0.01em',
+                    textDecoration: 'none',
+                    transition: 'all 0.15s ease',
+                    ...(active
+                      ? {
+                          background: 'rgba(200,169,110,0.18)',
+                          color: '#c8a96e',
+                          border: '1px solid rgba(200,169,110,0.25)',
+                        }
+                      : {
+                          color: 'rgba(255,255,255,0.65)',
+                          border: '1px solid transparent',
+                        }),
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) {
+                      (e.target as HTMLAnchorElement).style.color = '#fff'
+                      ;(e.target as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) {
+                      (e.target as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.65)'
+                      ;(e.target as HTMLAnchorElement).style.background = 'transparent'
+                    }
+                  }}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`rounded-lg px-7 py-3 text-sm font-semibold transition ${
-                      active
-                        ? 'bg-sky-500 text-white shadow-[0_10px_28px_rgba(14,165,233,0.35)]'
-                        : 'border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              })}
-            </nav>
-          </div>
-
-          <div className="flex items-center justify-end gap-3">
+          {/* Auth area */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {!isLoggedIn ? (
               <>
                 <button
                   onClick={() => router.push('/register')}
-                  className="rounded-lg border border-white/15 bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+                  style={{
+                    padding: '9px 20px', borderRadius: 10, fontSize: 14, fontWeight: 500,
+                    background: 'transparent', border: '1px solid rgba(255,255,255,0.18)',
+                    color: 'rgba(255,255,255,0.75)', cursor: 'pointer',
+                  }}
                 >
                   Register
                 </button>
-
                 <button
                   onClick={() => router.push('/login')}
-                  className="rounded-lg border border-white/15 bg-sky-900/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-800/60"
+                  style={{
+                    padding: '9px 20px', borderRadius: 10, fontSize: 14, fontWeight: 600,
+                    background: 'linear-gradient(135deg, #c8a96e, #a8893e)',
+                    border: '1px solid rgba(200,169,110,0.3)',
+                    color: '#fff', cursor: 'pointer',
+                    boxShadow: '0 4px 16px rgba(200,169,110,0.3)',
+                  }}
                 >
                   Sign In
                 </button>
               </>
             ) : (
               <>
-                <div className="hidden text-right sm:block">
-                  <p className="text-sm font-medium text-white">{user?.name}</p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-sky-300">
+                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: '#fff', letterSpacing: '-0.01em' }}>
+                    {user?.name}
+                  </span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 600, letterSpacing: '0.10em',
+                    textTransform: 'uppercase', color: '#c8a96e',
+                  }}>
                     {user?.role}
-                  </p>
+                  </span>
                 </div>
-
+                <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.10)' }} />
                 <button
                   onClick={handleLogout}
-                  className="rounded-lg border border-white/15 bg-white/5 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                  style={{
+                    padding: '9px 20px', borderRadius: 10, fontSize: 14, fontWeight: 500,
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
+                    color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                  }}
                 >
                   Logout
                 </button>

@@ -10,116 +10,173 @@ export default function HomePage() {
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
 
   const handleDentistRedirect = () => {
-    if (!isLoggedIn || !user) {
-      router.push('/login')
-      return
-    }
+    if (!isLoggedIn || !user) { router.push('/login'); return }
     router.push(user.role === 'admin' ? '/admin/dentists' : '/dentists')
   }
 
   const handleBookingRedirect = () => {
-    if (!isLoggedIn || !user) {
-      router.push('/login')
-      return
-    }
+    if (!isLoggedIn || !user) { router.push('/login'); return }
     router.push(user.role === 'admin' ? '/admin/bookings' : '/booking/me')
   }
 
+  const steps = [
+    { no: '01', title: 'Browse trusted dentists', desc: 'Explore specialists by expertise and experience to find the best match for your needs.' },
+    { no: '02', title: 'Book in a few clicks', desc: 'Create an appointment quickly with a clean, straightforward booking flow.' },
+    { no: '03', title: 'Manage with confidence', desc: 'Control your bookings while admins oversee the full system with role-based access.' },
+  ]
+
   return (
     <PageShell
-      className="bg-[linear-gradient(135deg,#f7fbff_0%,#edf4ff_35%,#f8fafc_100%)] py-5"
+      className="py-6"
       containerClassName="max-w-[1520px]"
     >
-      <div className="w-full space-y-5">
-        <section className="grid items-stretch gap-5 xl:grid-cols-[1fr_1fr]">
-          <div className="overflow-hidden rounded-xl border border-slate-300 bg-[linear-gradient(135deg,#050b1d_0%,#0a1534_26%,#1e3f9f_68%,#eef4ff_100%)] text-white shadow-xl">
-            <div className="flex min-h-[560px] flex-col justify-between p-6 sm:p-8 lg:p-10">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* Hero grid */}
+        <section style={{ display: 'grid', gap: 20, gridTemplateColumns: '1fr 1fr' }}>
+          {/* Hero card */}
+          <div style={{
+            borderRadius: 24,
+            background: 'linear-gradient(150deg, #0d1a36 0%, #1a2744 40%, #243560 75%, #1a3a6e 100%)',
+            overflow: 'hidden', position: 'relative',
+            border: '1px solid rgba(255,255,255,0.07)',
+            boxShadow: '0 20px 60px rgba(13,26,54,0.40)',
+          }}>
+            {/* Gold accent line */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+              background: 'linear-gradient(90deg, transparent, #c8a96e 30%, #a8893e 70%, transparent)',
+            }} />
+            {/* Subtle radial glow */}
+            <div style={{
+              position: 'absolute', top: -60, right: -60, width: 300, height: 300,
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(200,169,110,0.08), transparent 70%)',
+              pointerEvents: 'none',
+            }} />
+
+            <div style={{ padding: '52px 52px 48px', minHeight: 560, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
               <div>
-                <span className="inline-block rounded-md border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-100">
-                  Smart Dental Appointment Platform
+                <span style={{
+                  display: 'inline-block',
+                  background: 'rgba(200,169,110,0.14)',
+                  border: '1px solid rgba(200,169,110,0.28)',
+                  borderRadius: 6, padding: '5px 14px',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+                  textTransform: 'uppercase', color: '#c8a96e',
+                }}>
+                  Smart Dental Platform
                 </span>
 
-                <h1 className="mt-5 max-w-4xl text-5xl font-bold leading-[1.03] sm:text-6xl xl:text-7xl">
-                  Beautiful dental booking,
-                  <br />
-                  organized in one place.
+                <h1 style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize: 'clamp(42px, 4.5vw, 64px)',
+                  fontWeight: 400,
+                  color: '#fff',
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.03em',
+                  marginTop: 24,
+                  maxWidth: 520,
+                }}>
+                  Beautiful dental booking, organized in one place.
                 </h1>
 
-                <p className="mt-5 max-w-3xl text-lg leading-9 text-slate-100 sm:text-xl">
-                  A modern interface for discovering dentists, creating
-                  appointments, and managing schedules with a seamless experience
-                  for both patients and admins.
+                <p style={{ marginTop: 20, fontSize: 16, lineHeight: 1.75, color: 'rgba(255,255,255,0.58)', maxWidth: 420 }}>
+                  A modern platform for discovering dentists, creating appointments, and managing schedules with a seamless experience.
                 </p>
 
-                <div className="mt-10 flex flex-wrap gap-4">
+                <div style={{ display: 'flex', gap: 12, marginTop: 36, flexWrap: 'wrap' }}>
                   <button
                     onClick={handleDentistRedirect}
-                    className="rounded-lg border border-white bg-white px-8 py-4 font-semibold text-slate-900 shadow-[0_12px_28px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5 hover:bg-slate-100"
+                    style={{
+                      padding: '14px 30px', borderRadius: 12, fontSize: 15, fontWeight: 600,
+                      background: 'linear-gradient(135deg, #c8a96e, #a8893e)',
+                      border: 'none', color: '#fff', cursor: 'pointer',
+                      boxShadow: '0 6px 24px rgba(200,169,110,0.40)',
+                      letterSpacing: '-0.01em',
+                    }}
                   >
                     Explore Dentists
                   </button>
-
                   <button
                     onClick={handleBookingRedirect}
-                    className="rounded-lg border border-white/30 bg-slate-950/35 px-8 py-4 font-semibold text-white shadow-[0_12px_28px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-slate-950/50"
+                    style={{
+                      padding: '14px 30px', borderRadius: 12, fontSize: 15, fontWeight: 500,
+                      background: 'rgba(255,255,255,0.07)',
+                      border: '1px solid rgba(255,255,255,0.14)',
+                      color: 'rgba(255,255,255,0.80)', cursor: 'pointer',
+                      letterSpacing: '-0.01em',
+                    }}
                   >
                     Manage Bookings
                   </button>
                 </div>
               </div>
 
-              <div className="pt-12 text-slate-100">
-                <div className="flex flex-wrap gap-6 text-sm font-medium sm:text-base">
-                  <span>✓ Search dentists</span>
-                  <span>✓ Create appointments</span>
-                  <span>✓ Manage bookings</span>
-                </div>
+              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+                {['Search dentists', 'Create appointments', 'Manage bookings'].map((f) => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: '50%',
+                      background: 'rgba(200,169,110,0.20)',
+                      border: '1px solid rgba(200,169,110,0.40)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 10, color: '#c8a96e',
+                    }}>✓</div>
+                    <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.58)', fontWeight: 500 }}>{f}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="flex min-h-[560px] flex-col justify-center gap-4">
-            <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-lg">
-              <p className="text-sm font-bold uppercase tracking-[0.25em] text-sky-600">
+          {/* Right column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Intro card */}
+            <div style={{
+              borderRadius: 24, background: '#fff',
+              border: '1.5px solid #e4e1db',
+              padding: '32px 36px',
+              boxShadow: '0 4px 24px rgba(24,22,15,0.07)',
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#c8a96e' }}>
                 Platform Guide
               </p>
-              <h2 className="mt-2 text-4xl font-bold leading-tight text-slate-900">
-                Everything your demo needs in one flow
+              <h2 style={{
+                fontFamily: "'Instrument Serif', Georgia, serif",
+                fontSize: 32, fontWeight: 400, color: '#18160f',
+                letterSpacing: '-0.02em', lineHeight: 1.2, marginTop: 10,
+              }}>
+                Everything you need in one seamless flow
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Show registration, authentication, dentist browsing, booking
-                creation, and role-based management in a polished journey that
-                looks consistent from start to finish.
+              <p style={{ marginTop: 12, fontSize: 15, lineHeight: 1.7, color: '#5c5850' }}>
+                From registration to booking management — a polished journey for patients and admins alike.
               </p>
             </div>
 
-            {[
-              [
-                '01',
-                'Browse trusted dentists',
-                'See dentists by expertise and experience before choosing the best match for your appointment.',
-              ],
-              [
-                '02',
-                'Book in a few clicks',
-                'Create an appointment quickly with a clean booking flow and clear details before submission.',
-              ],
-              [
-                '03',
-                'Manage with confidence',
-                'Users control their own bookings while admins can review and update every appointment in the system.',
-              ],
-            ].map(([no, title, desc]) => (
+            {/* Step cards */}
+            {steps.map(({ no, title, desc }) => (
               <div
                 key={no}
-                className="grid grid-cols-[64px_1fr] gap-4 rounded-xl border border-slate-300 bg-white p-5 shadow"
+                style={{
+                  borderRadius: 20, background: '#fff',
+                  border: '1.5px solid #e4e1db',
+                  padding: '22px 28px',
+                  display: 'grid', gridTemplateColumns: '56px 1fr', gap: 18, alignItems: 'start',
+                  boxShadow: '0 2px 12px rgba(24,22,15,0.05)',
+                }}
               >
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-slate-300 bg-slate-50 text-2xl font-bold text-sky-600">
+                <div style={{
+                  width: 56, height: 56, borderRadius: 14,
+                  background: '#f9f8f6', border: '1.5px solid #e4e1db',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize: 22, color: '#c8a96e',
+                }}>
                   {no}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-                  <p className="mt-2 text-lg leading-8 text-slate-600">{desc}</p>
+                  <h3 style={{ fontSize: 17, fontWeight: 600, color: '#18160f', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ marginTop: 6, fontSize: 14, lineHeight: 1.65, color: '#5c5850' }}>{desc}</p>
                 </div>
               </div>
             ))}

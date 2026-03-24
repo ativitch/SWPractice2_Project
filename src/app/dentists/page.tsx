@@ -7,11 +7,15 @@ import type { Dentist } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
 import PageShell from '@/components/PageShell'
 
-type SortOption =
-  | 'name-asc'
-  | 'name-desc'
-  | 'exp-asc'
-  | 'exp-desc'
+type SortOption = 'name-asc' | 'name-desc' | 'exp-asc' | 'exp-desc'
+
+const inputStyle = {
+  width: '100%', padding: '11px 16px',
+  borderRadius: 12, fontSize: 14,
+  border: '1.5px solid #e4e1db',
+  background: '#f9f8f6', color: '#18160f',
+  outline: 'none', appearance: 'none' as const,
+}
 
 export default function DentistsPage() {
   const router = useRouter()
@@ -26,12 +30,8 @@ export default function DentistsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isLoggedIn || !token) {
-      router.push('/login')
-      return
-    }
-
-    const loadDentists = async () => {
+    if (!isLoggedIn || !token) { router.push('/login'); return }
+    const load = async () => {
       try {
         const res = await getDentists(token)
         setDentists(res.data)
@@ -41,243 +41,253 @@ export default function DentistsPage() {
         setLoading(false)
       }
     }
-
-    void loadDentists()
+    void load()
   }, [isLoggedIn, token, router])
 
-  const expertiseOptions = useMemo(() => {
-    return [...new Set(dentists.map((dentist) => dentist.areaOfExpertise))].sort(
-      (a, b) => a.localeCompare(b)
-    )
-  }, [dentists])
+  const expertiseOptions = useMemo(() =>
+    [...new Set(dentists.map((d) => d.areaOfExpertise))].sort((a, b) => a.localeCompare(b))
+  , [dentists])
 
   const filteredDentists = useMemo(() => {
-    let result = dentists.filter((dentist) => {
-      const matchesSearch = [dentist.name, dentist.areaOfExpertise]
-        .join(' ')
-        .toLowerCase()
-        .includes(search.toLowerCase())
-
-      const matchesExpertise =
-        expertiseFilter === 'all' ||
-        dentist.areaOfExpertise === expertiseFilter
-
-      const years = dentist.yearsOfExperience
-      let matchesExperience = true
-
-      if (experienceFilter === '0-5') {
-        matchesExperience = years >= 0 && years <= 5
-      } else if (experienceFilter === '6-10') {
-        matchesExperience = years >= 6 && years <= 10
-      } else if (experienceFilter === '11-15') {
-        matchesExperience = years >= 11 && years <= 15
-      } else if (experienceFilter === '16+') {
-        matchesExperience = years >= 16
-      }
-
-      return matchesSearch && matchesExpertise && matchesExperience
+    let result = dentists.filter((d) => {
+      const matchSearch = [d.name, d.areaOfExpertise].join(' ').toLowerCase().includes(search.toLowerCase())
+      const matchExp = expertiseFilter === 'all' || d.areaOfExpertise === expertiseFilter
+      const y = d.yearsOfExperience
+      const matchYrs = experienceFilter === 'all'
+        || (experienceFilter === '0-5' && y <= 5)
+        || (experienceFilter === '6-10' && y >= 6 && y <= 10)
+        || (experienceFilter === '11-15' && y >= 11 && y <= 15)
+        || (experienceFilter === '16+' && y >= 16)
+      return matchSearch && matchExp && matchYrs
     })
-
-    result = [...result].sort((a, b) => {
+    return [...result].sort((a, b) => {
       switch (sortBy) {
-        case 'name-desc':
-          return b.name.localeCompare(a.name)
-        case 'exp-asc':
-          return a.yearsOfExperience - b.yearsOfExperience
-        case 'exp-desc':
-          return b.yearsOfExperience - a.yearsOfExperience
-        case 'name-asc':
-        default:
-          return a.name.localeCompare(b.name)
+        case 'name-desc': return b.name.localeCompare(a.name)
+        case 'exp-asc': return a.yearsOfExperience - b.yearsOfExperience
+        case 'exp-desc': return b.yearsOfExperience - a.yearsOfExperience
+        default: return a.name.localeCompare(b.name)
       }
     })
-
-    return result
   }, [dentists, search, expertiseFilter, experienceFilter, sortBy])
+
+  const hasFilters = search || expertiseFilter !== 'all' || experienceFilter !== 'all' || sortBy !== 'name-asc'
 
   return (
     <PageShell>
-      <div className="w-full space-y-8">
-        <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 sm:p-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <span className="rounded-full bg-sky-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-700">
-                Dentist directory
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* Header */}
+        <section style={{
+          borderRadius: 24, background: '#fff',
+          border: '1.5px solid #e4e1db',
+          padding: '40px 44px',
+          boxShadow: '0 4px 24px rgba(24,22,15,0.06)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 32, flexWrap: 'wrap' }}>
+            <div style={{ maxWidth: 560 }}>
+              <span style={{
+                display: 'inline-block',
+                background: '#f5edd8', border: '1px solid rgba(200,169,110,0.35)',
+                borderRadius: 6, padding: '4px 12px',
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+                textTransform: 'uppercase', color: '#a8893e',
+              }}>
+                Dentist Directory
               </span>
-              <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              <h1 style={{
+                fontFamily: "'Instrument Serif', Georgia, serif",
+                fontSize: 'clamp(30px, 3vw, 44px)', fontWeight: 400,
+                color: '#18160f', letterSpacing: '-0.02em', lineHeight: 1.15,
+                marginTop: 16,
+              }}>
                 Find the right dentist for your next appointment.
               </h1>
-              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                Browse specialists, compare expertise and experience, then book
-                with a cleaner and more flexible directory page.
+              <p style={{ marginTop: 12, fontSize: 15, lineHeight: 1.7, color: '#5c5850' }}>
+                Browse specialists, compare expertise, and book with confidence.
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm text-slate-500">Available dentists</p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{
+                borderRadius: 16, border: '1.5px solid #e4e1db',
+                padding: '18px 24px', textAlign: 'center',
+                minWidth: 110,
+              }}>
+                <p style={{ fontSize: 12, color: '#8c8880', fontWeight: 500 }}>Available</p>
+                <p style={{ fontSize: 32, fontWeight: 700, color: '#18160f', letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 4 }}>
                   {filteredDentists.length}
                 </p>
               </div>
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm text-slate-500">Quick action</p>
+              <div style={{
+                borderRadius: 16, border: '1.5px solid #e4e1db',
+                padding: '18px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+              }}>
+                <p style={{ fontSize: 12, color: '#8c8880', fontWeight: 500, marginBottom: 10 }}>Quick action</p>
                 <button
                   onClick={() => router.push('/booking/me')}
-                  className="mt-3 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  style={{
+                    padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600,
+                    background: '#18160f', border: 'none', color: '#fff', cursor: 'pointer',
+                    letterSpacing: '-0.01em',
+                  }}
                 >
-                  View my booking
+                  My Bookings
                 </button>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">Dentist List</h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Search, filter, and sort dentists by expertise and years of
-              experience.
-            </p>
+        {/* List */}
+        <section style={{
+          borderRadius: 24, background: '#fff',
+          border: '1.5px solid #e4e1db',
+          padding: '36px 44px',
+          boxShadow: '0 4px 24px rgba(24,22,15,0.05)',
+        }}>
+          <div style={{ marginBottom: 28 }}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: '#18160f', letterSpacing: '-0.02em' }}>Dentist List</h2>
+            <p style={{ marginTop: 6, fontSize: 14, color: '#8c8880' }}>Search, filter, and sort dentists by expertise and experience.</p>
           </div>
 
-          <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Search
-              </label>
-              <input
-                type="text"
-                placeholder="Search dentist or expertise"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
-              />
-            </div>
+          {/* Filters */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 24 }}>
+            {[
+              { label: 'Search', type: 'input' as const, value: search, onChange: setSearch, placeholder: 'Name or expertise' },
+            ].map(({ label, value, onChange, placeholder }) => (
+              <div key={label}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#8c8880', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  {label}
+                </label>
+                <input
+                  style={inputStyle}
+                  type="text"
+                  placeholder={placeholder}
+                  value={value as string}
+                  onChange={(e) => onChange(e.target.value)}
+                  onFocus={(e) => { e.target.style.borderColor = '#c8a96e'; e.target.style.background = '#fff' }}
+                  onBlur={(e) => { e.target.style.borderColor = '#e4e1db'; e.target.style.background = '#f9f8f6' }}
+                />
+              </div>
+            ))}
 
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Area of Expertise
-              </label>
-              <select
-                value={expertiseFilter}
-                onChange={(e) => setExpertiseFilter(e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
-              >
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#8c8880', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Expertise</label>
+              <select style={inputStyle} value={expertiseFilter} onChange={(e) => setExpertiseFilter(e.target.value)}
+                onFocus={(e) => { e.target.style.borderColor = '#c8a96e'; e.target.style.background = '#fff' }}
+                onBlur={(e) => { e.target.style.borderColor = '#e4e1db'; e.target.style.background = '#f9f8f6' }}>
                 <option value="all">All expertise</option>
-                {expertiseOptions.map((expertise) => (
-                  <option key={expertise} value={expertise}>
-                    {expertise}
-                  </option>
-                ))}
+                {expertiseOptions.map((e) => <option key={e} value={e}>{e}</option>)}
               </select>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Years of Experience
-              </label>
-              <select
-                value={experienceFilter}
-                onChange={(e) => setExperienceFilter(e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
-              >
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#8c8880', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Experience</label>
+              <select style={inputStyle} value={experienceFilter} onChange={(e) => setExperienceFilter(e.target.value)}
+                onFocus={(e) => { e.target.style.borderColor = '#c8a96e'; e.target.style.background = '#fff' }}
+                onBlur={(e) => { e.target.style.borderColor = '#e4e1db'; e.target.style.background = '#f9f8f6' }}>
                 <option value="all">All experience</option>
-                <option value="0-5">0 - 5 years</option>
-                <option value="6-10">6 - 10 years</option>
-                <option value="11-15">11 - 15 years</option>
+                <option value="0-5">0–5 years</option>
+                <option value="6-10">6–10 years</option>
+                <option value="11-15">11–15 years</option>
                 <option value="16+">16+ years</option>
               </select>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Sort By
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300 focus:bg-white"
-              >
-                <option value="name-asc">Name: A to Z</option>
-                <option value="name-desc">Name: Z to A</option>
-                <option value="exp-asc">Experience: Low to High</option>
-                <option value="exp-desc">Experience: High to Low</option>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#8c8880', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sort</label>
+              <select style={inputStyle} value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)}
+                onFocus={(e) => { e.target.style.borderColor = '#c8a96e'; e.target.style.background = '#fff' }}
+                onBlur={(e) => { e.target.style.borderColor = '#e4e1db'; e.target.style.background = '#f9f8f6' }}>
+                <option value="name-asc">Name: A–Z</option>
+                <option value="name-desc">Name: Z–A</option>
+                <option value="exp-asc">Experience: Low–High</option>
+                <option value="exp-desc">Experience: High–Low</option>
               </select>
             </div>
           </div>
 
-          {(search ||
-            expertiseFilter !== 'all' ||
-            experienceFilter !== 'all' ||
-            sortBy !== 'name-asc') && (
-            <div className="mb-6 flex flex-wrap gap-3">
+          {hasFilters && (
+            <div style={{ marginBottom: 20 }}>
               <button
-                onClick={() => {
-                  setSearch('')
-                  setExpertiseFilter('all')
-                  setExperienceFilter('all')
-                  setSortBy('name-asc')
+                onClick={() => { setSearch(''); setExpertiseFilter('all'); setExperienceFilter('all'); setSortBy('name-asc') }}
+                style={{
+                  padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+                  border: '1.5px solid #e4e1db', background: '#fff',
+                  color: '#5c5850', cursor: 'pointer',
                 }}
-                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
                 Reset filters
               </button>
             </div>
           )}
 
-          {loading && <p className="text-slate-600">Loading dentists...</p>}
-
+          {loading && (
+            <p style={{ fontSize: 14, color: '#8c8880', padding: '24px 0' }}>Loading dentists...</p>
+          )}
           {error && (
-            <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
+            <div style={{ padding: '12px 16px', borderRadius: 12, background: '#fee2e2', border: '1px solid #fecaca', fontSize: 13, color: '#dc2626' }}>{error}</div>
           )}
 
           {!loading && !error && (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
               {filteredDentists.map((dentist) => (
                 <div
                   key={dentist._id}
-                  className="group rounded-[28px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-lg shadow-slate-200/50"
+                  style={{
+                    borderRadius: 20,
+                    border: '1.5px solid #e4e1db',
+                    background: '#fff',
+                    padding: '24px',
+                    boxShadow: '0 2px 12px rgba(24,22,15,0.05)',
+                    transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLDivElement
+                    el.style.boxShadow = '0 8px 32px rgba(24,22,15,0.10)'
+                    el.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLDivElement
+                    el.style.boxShadow = '0 2px 12px rgba(24,22,15,0.05)'
+                    el.style.transform = 'translateY(0)'
+                  }}
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#a8893e' }}>
                         {dentist.areaOfExpertise}
                       </p>
-                      <h3 className="mt-3 text-xl font-bold text-slate-900">
+                      <h3 style={{ fontSize: 19, fontWeight: 700, color: '#18160f', letterSpacing: '-0.02em', marginTop: 6 }}>
                         {dentist.name}
                       </h3>
                     </div>
-                    <div className="rounded-2xl bg-sky-50 px-3 py-2 text-right">
-                      <p className="text-xs text-sky-700">Experience</p>
-                      <p className="text-sm font-bold text-sky-900">
-                        {dentist.yearsOfExperience} yrs
+                    <div style={{
+                      borderRadius: 12,
+                      background: '#f5edd8', border: '1px solid rgba(200,169,110,0.30)',
+                      padding: '8px 14px', textAlign: 'center', flexShrink: 0,
+                    }}>
+                      <p style={{ fontSize: 10, color: '#a8893e', fontWeight: 600 }}>Exp.</p>
+                      <p style={{ fontSize: 16, fontWeight: 700, color: '#18160f', letterSpacing: '-0.02em' }}>
+                        {dentist.yearsOfExperience}y
                       </p>
                     </div>
                   </div>
 
-                  <p className="mt-5 text-sm leading-7 text-slate-600">
-                    Specialist in{' '}
-                    <span className="font-semibold text-slate-900">
-                      {dentist.areaOfExpertise}
-                    </span>{' '}
-                    with a polished booking flow ready for quick appointment
-                    creation.
+                  <p style={{ marginTop: 14, fontSize: 13, lineHeight: 1.65, color: '#8c8880' }}>
+                    Specialist in <span style={{ color: '#5c5850', fontWeight: 600 }}>{dentist.areaOfExpertise}</span> with a streamlined booking flow for quick appointments.
                   </p>
 
-                  <div className="mt-6 flex gap-3">
+                  <div style={{ marginTop: 20 }}>
                     <button
-                      onClick={() =>
-                        router.push(`/booking?dentist=${dentist._id}`)
-                      }
-                      className="flex-1 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 hover:-translate-y-0.5 hover:bg-slate-800"
+                      onClick={() => router.push(`/booking?dentist=${dentist._id}`)}
+                      style={{
+                        width: '100%', padding: '11px', borderRadius: 12, fontSize: 14, fontWeight: 600,
+                        background: '#18160f', border: 'none', color: '#fff', cursor: 'pointer',
+                        letterSpacing: '-0.01em',
+                      }}
                     >
                       Book now
                     </button>
-                
                   </div>
                 </div>
               ))}
@@ -285,8 +295,12 @@ export default function DentistsPage() {
           )}
 
           {!loading && !error && filteredDentists.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-600">
-              No dentist found for your current filters.
+            <div style={{
+              borderRadius: 16, border: '1.5px dashed #e4e1db',
+              background: '#f9f8f6', padding: '48px 24px',
+              textAlign: 'center', fontSize: 14, color: '#8c8880',
+            }}>
+              No dentist found matching your current filters.
             </div>
           )}
         </section>
