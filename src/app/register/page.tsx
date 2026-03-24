@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerUser } from '@/lib/auth'
+import AuthSplitLayout from '@/components/AuthSplitLayout'
 
 export default function RegisterPage() {
   const router = useRouter()

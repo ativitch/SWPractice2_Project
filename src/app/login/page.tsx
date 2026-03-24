@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { loginUser, getMe } from '@/lib/auth'
 import { useAppDispatch } from '@/redux/hooks'
 import { setCredentials } from '@/redux/features/authSlice'
+import AuthSplitLayout from '@/components/AuthSplitLayout'
 
 export default function LoginPage() {
   const router = useRouter()

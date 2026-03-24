@@ -188,7 +188,7 @@ export default function AdminBookingsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   )
 }
