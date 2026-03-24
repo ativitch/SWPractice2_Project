@@ -6,6 +6,7 @@ import { getDentists } from '@/lib/dentists'
 import { createBooking } from '@/lib/bookings'
 import type { Dentist } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function BookingPage() {
   const router = useRouter()
@@ -69,8 +70,8 @@ export default function BookingPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+    <PageShell>
+      <div className="grid w-full gap-8 lg:grid-cols-[0.92fr_1.08fr]">
         <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(145deg,#0f172a_0%,#1e293b_60%,#164e63_120%)] p-8 text-white shadow-2xl shadow-slate-900/15 sm:p-10">
           <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-sky-100">
             Booking center
@@ -193,6 +194,6 @@ export default function BookingPage() {
           </form>
         </section>
       </div>
-    </main>
+    </PageShell>
   )
 }

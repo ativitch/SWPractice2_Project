@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { Dentist } from '@/interface'
 import { getDentists } from '@/lib/dentists'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function AdminDentistsPage() {
   const router = useRouter()
@@ -65,8 +66,8 @@ export default function AdminDentistsPage() {
   const expertiseCount = new Set(dentists.map((dentist) => dentist.areaOfExpertise)).size
 
   return (
-    <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <PageShell>
+      <div className="w-full space-y-8">
         <section className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 sm:p-10">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div className="max-w-2xl">
@@ -196,6 +197,6 @@ export default function AdminDentistsPage() {
           )}
         </section>
       </div>
-    </main>
+    </PageShell>
   )
 }

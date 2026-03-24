@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { deleteBookingById, getAllBookings } from '@/lib/bookings'
 import type { Booking, Dentist, User } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function AdminBookingsPage() {
   const router = useRouter()
@@ -79,8 +80,8 @@ export default function AdminBookingsPage() {
   }, [bookings, search])
 
   return (
-    <main className="min-h-screen bg-[#efefef] px-6 py-10">
-      <div className="mx-auto max-w-7xl border border-slate-300 bg-white p-8 shadow-lg">
+    <PageShell className="bg-[#efefef]">
+      <div className="w-full border border-slate-300 bg-white p-8 shadow-lg">
         <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
           <div className="space-y-4">
             <button
@@ -189,6 +190,6 @@ export default function AdminBookingsPage() {
           </div>
         </div>
       </div>
-    </main>
+    </PageShell>
   )
 }

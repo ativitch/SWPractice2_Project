@@ -6,6 +6,7 @@ import { getAllBookings, updateBookingById } from '@/lib/bookings'
 import { getDentists } from '@/lib/dentists'
 import type { Booking, Dentist, User } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function AdminEditBookingsPage() {
   const router = useRouter()
@@ -122,8 +123,8 @@ export default function AdminEditBookingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#efefef] px-6 py-10">
-      <div className="mx-auto max-w-7xl border border-slate-300 bg-white p-8 shadow-lg">
+    <PageShell className="bg-[#efefef]">
+      <div className="w-full border border-slate-300 bg-white p-8 shadow-lg">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
             <div className="mb-6 flex items-center gap-4">
@@ -270,6 +271,6 @@ export default function AdminEditBookingsPage() {
           </div>
         </div>
       </div>
-    </main>
+    </PageShell>
   )
 }

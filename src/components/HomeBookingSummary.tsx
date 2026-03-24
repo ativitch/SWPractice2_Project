@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -41,7 +40,9 @@ export default function HomeBookingSummary() {
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load booking summary')
+        setError(
+          err instanceof Error ? err.message : 'Failed to load booking summary'
+        )
       } finally {
         setLoading(false)
       }
@@ -62,7 +63,7 @@ export default function HomeBookingSummary() {
   const renderUserBooking = () => {
     if (!myBooking) {
       return (
-        <div className="border border-slate-200 bg-slate-50 px-6 py-10 text-center">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-10 text-center">
           <h3 className="text-2xl font-bold text-slate-900">No booking yet</h3>
           <p className="mt-3 text-base leading-7 text-slate-600">
             You have not created any appointment yet. Start by browsing dentists
@@ -72,14 +73,14 @@ export default function HomeBookingSummary() {
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => router.push('/dentists')}
-              className="border border-slate-900 bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+              className="rounded-lg border border-slate-900 bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
             >
               Explore Dentists
             </button>
 
             <button
               onClick={() => router.push('/booking')}
-              className="border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+              className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
             >
               Create Booking
             </button>
@@ -95,7 +96,7 @@ export default function HomeBookingSummary() {
 
     return (
       <div className="grid gap-6 lg:grid-cols-[1fr_auto]">
-        <div className="border border-slate-200 bg-slate-50 p-6">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-6">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">
             My Booking Summary
           </p>
@@ -137,21 +138,21 @@ export default function HomeBookingSummary() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push('/booking/me')}
-            className="border border-slate-900 bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-lg border border-slate-900 bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
             View My Booking
           </button>
 
           <button
             onClick={() => router.push('/booking/edit')}
-            className="border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
           >
             Update Booking
           </button>
 
           <button
             onClick={() => router.push('/dentists')}
-            className="border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
           >
             Browse Dentists
           </button>
@@ -178,14 +179,14 @@ export default function HomeBookingSummary() {
 
           <button
             onClick={() => router.push('/admin/bookings')}
-            className="border border-slate-900 bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-lg border border-slate-900 bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
             Manage All Bookings
           </button>
         </div>
 
         {sortedRecentBookings.length === 0 ? (
-          <div className="border border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-600">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-600">
             No booking records found.
           </div>
         ) : (
@@ -205,7 +206,7 @@ export default function HomeBookingSummary() {
                 return (
                   <div
                     key={booking._id}
-                    className="grid gap-4 border border-slate-200 bg-slate-50 p-5 lg:grid-cols-[1fr_auto]"
+                    className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 lg:grid-cols-[1fr_auto]"
                   >
                     <div className="space-y-2">
                       <p className="text-lg font-semibold text-slate-900">
@@ -225,7 +226,7 @@ export default function HomeBookingSummary() {
                     <div className="flex items-start">
                       <button
                         onClick={() => router.push('/admin/bookings/edit')}
-                        className="border border-slate-300 bg-white px-4 py-2.5 font-semibold text-slate-900 transition hover:bg-slate-100"
+                        className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-900 transition hover:bg-slate-100"
                       >
                         Edit
                       </button>
@@ -242,7 +243,7 @@ export default function HomeBookingSummary() {
 
   if (!isLoggedIn) {
     return (
-      <section className="border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
+      <section className="rounded-xl border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
         <h2 className="text-3xl font-bold text-slate-900">
           Access your booking tools
         </h2>
@@ -254,14 +255,14 @@ export default function HomeBookingSummary() {
         <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={() => router.push('/login')}
-            className="border border-slate-900 bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-lg border border-slate-900 bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
             Sign in
           </button>
 
           <button
             onClick={() => router.push('/register')}
-            className="border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
           >
             Create account
           </button>
@@ -271,13 +272,13 @@ export default function HomeBookingSummary() {
   }
 
   return (
-    <section className="border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
+    <section className="rounded-xl border border-slate-300 bg-white p-6 shadow-lg sm:p-8">
       {loading ? (
-        <div className="border border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-600">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-600">
           Loading booking summary...
         </div>
       ) : error ? (
-        <div className="border border-slate-200 bg-slate-50 px-6 py-10 text-center text-red-600">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-10 text-center text-red-600">
           {error}
         </div>
       ) : user?.role === 'admin' ? (

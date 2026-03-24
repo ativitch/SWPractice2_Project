@@ -6,6 +6,7 @@ import { getDentists } from '@/lib/dentists'
 import { getMyBooking, updateMyBooking } from '@/lib/bookings'
 import type { Booking, Dentist } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function EditBookingPage() {
   const router = useRouter()
@@ -75,63 +76,65 @@ export default function EditBookingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 p-8">
-      <div className="mx-auto max-w-xl border border-slate-300 bg-white p-8 shadow-lg">
-        <h1 className="mb-6 text-2xl font-bold text-slate-900">
-          Update Booking
-        </h1>
+    <PageShell className="bg-slate-100">
+      <div className="flex w-full justify-center">
+        <div className="w-full max-w-xl border border-slate-300 bg-white p-8 shadow-lg">
+          <h1 className="mb-6 text-2xl font-bold text-slate-900">
+            Update Booking
+          </h1>
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : error && !booking ? (
-          <p className="text-red-600">{error}</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="mb-2 block font-medium text-slate-700">
-                Appointment Date and Time
-              </label>
-              <input
-                type="datetime-local"
-                className="w-full border border-slate-300 px-3 py-3 outline-none"
-                value={bookingDate}
-                onChange={(e) => setBookingDate(e.target.value)}
-                required
-              />
-            </div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : error && !booking ? (
+            <p className="text-red-600">{error}</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="mb-2 block font-medium text-slate-700">
+                  Appointment Date and Time
+                </label>
+                <input
+                  type="datetime-local"
+                  className="w-full border border-slate-300 px-3 py-3 outline-none"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="mb-2 block font-medium text-slate-700">
-                Select Dentist
-              </label>
-              <select
-                className="w-full border border-slate-300 px-3 py-3 outline-none"
-                value={dentist}
-                onChange={(e) => setDentist(e.target.value)}
-                required
+              <div>
+                <label className="mb-2 block font-medium text-slate-700">
+                  Select Dentist
+                </label>
+                <select
+                  className="w-full border border-slate-300 px-3 py-3 outline-none"
+                  value={dentist}
+                  onChange={(e) => setDentist(e.target.value)}
+                  required
+                >
+                  <option value="">Select dentist</option>
+                  {dentists.map((d) => (
+                    <option key={d._id} value={d._id}>
+                      {d.name} - {d.areaOfExpertise}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {error && <p className="text-red-600">{error}</p>}
+              {success && <p className="text-green-600">{success}</p>}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full border border-slate-300 bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
               >
-                <option value="">Select dentist</option>
-                {dentists.map((d) => (
-                  <option key={d._id} value={d._id}>
-                    {d.name} - {d.areaOfExpertise}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {error && <p className="text-red-600">{error}</p>}
-            {success && <p className="text-green-600">{success}</p>}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full border border-slate-300 bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
-            >
-              {submitting ? 'Updating...' : 'Update Booking'}
-            </button>
-          </form>
-        )}
+                {submitting ? 'Updating...' : 'Update Booking'}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
-    </main>
+    </PageShell>
   )
 }

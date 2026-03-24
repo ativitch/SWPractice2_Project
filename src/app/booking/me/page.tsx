@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { deleteMyBooking, getMyBooking } from '@/lib/bookings'
 import type { Booking, Dentist } from '@/interface'
 import { useAppSelector } from '@/redux/hooks'
+import PageShell from '@/components/PageShell'
 
 export default function MyBookingPage() {
   const router = useRouter()
@@ -55,8 +56,8 @@ export default function MyBookingPage() {
       : null
 
   return (
-    <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[320px_1fr]">
+    <PageShell>
+      <div className="grid w-full gap-8 lg:grid-cols-[320px_1fr]">
         <aside className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-7">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
             Quick actions
@@ -77,10 +78,10 @@ export default function MyBookingPage() {
             </button>
 
             <button
-                onClick={() => router.push('/booking/edit')}
-                className="w-full border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 transition hover:bg-slate-100"
+              onClick={() => router.push('/booking/edit')}
+              className="w-full border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 transition hover:bg-slate-100"
             >
-                Update booking
+              Update booking
             </button>
 
             <button
@@ -168,6 +169,6 @@ export default function MyBookingPage() {
           )}
         </section>
       </div>
-    </main>
+    </PageShell>
   )
 }
