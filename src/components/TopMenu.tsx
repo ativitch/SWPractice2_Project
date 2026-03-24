@@ -8,7 +8,7 @@ import { logout } from '@/redux/features/authSlice'
 export default function TopMenu() {
   const pathname = usePathname()
   const router = useRouter()
-  const pathname = usePathname()
+  //const pathname = usePathname()
   const dispatch = useAppDispatch()
   const { isLoggedIn, user } = useAppSelector((state) => state.auth)
 
